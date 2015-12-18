@@ -63,8 +63,7 @@ Bundle 'Yggdroot/indentLine'
 
 Plugin 'The-NERD-tree'
 Plugin 'Conque-shell'
-
-Bundle 'git://git.wincent.com/command-t.git'
+Plugin 'taglist.vim'
 
 filetype plugin indent on
 
