@@ -59,8 +59,13 @@ call vundle#rc()
 
 " 필수 Bundle
 Bundle 'gmarik/vundle'
+Bundle 'Yggdroot/indentLine'
 
 Plugin 'The-NERD-tree'
 Plugin 'Conque-shell'
+Plugin 'taglist.vim'
 
 filetype plugin indent on
+
+let g:indentLine_char = '|'
+let g:indentLine_color_term = 0
