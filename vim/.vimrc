@@ -1,12 +1,12 @@
 set nu
 "set term=xterm-256color
 "color northland
-set tabstop=2
+"set tabstop=2
 set shiftwidth=2
 "set autoindent
 "set cindent
 set ignorecase
-set smartcase
+"set smartcase
 "set smartindent
 set sol
 set showmatch
@@ -46,7 +46,7 @@ map <F2>		:E<CR>
 map <F3>		gt
 map <F4>		gT
 map <F5>		:tabnew<CR>
-map <F6>		:NERDTree<CR>
+map <F6>		:sts
 
 map <F7>		:tlist<CR>
 map <F8>		:tb<CR>
