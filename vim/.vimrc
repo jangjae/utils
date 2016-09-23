@@ -106,7 +106,7 @@ Bundle 'Yggdroot/indentLine'
 
 Plugin 'The-NERD-tree'
 Plugin 'Conque-shell'
-Plugin 'taglist.vim'
+"Plugin 'taglist.vim'
 
 filetype plugin indent on
 
