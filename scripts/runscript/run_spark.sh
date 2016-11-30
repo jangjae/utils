@@ -33,6 +33,9 @@ PR_input_path=`pwd`/../benchmarks/snap_dataset/$PR_input
 PR_num_iter=10 # perf event -- should disable perf event paranoid 
 
 # terasort
+TS_input=10g
+TS_input_path=`pwd`/../benchmarks/spark-terasort-master/terasort_input/$TS_input
+TS_output_path=`pwd`/../benchmarks/spark-terasort-master/terasort_output/$TS_input
 
 echo -e "${BLUE}result_path    ${NC}" ${GREEN}$result_path
 echo -e "${BLUE}script_path    ${NC}" ${GREEN}$script_path
@@ -68,9 +71,12 @@ perf_event="instructions,$perf_event_l2"
 perf_prefix="perf stat -a -e $perf_event "
 sed -i "28s/.*/  PERF_PREFIX=\"$perf_prefix\"/g" $spark_path/bin/spark-class
 
-#script options (-d: dump, -m: rdd match)
-script_opt=""
+#script options (-d: dump, -m: rdd match, -g: gc dump to csv)
+script_opt="-g"
 #script_opt="-d -m"
+
+#numastat event
+numastat_event="FilePages"
 
 init_instance() {
   # set numa prefix
@@ -115,9 +121,17 @@ run_bench() {
     input=$PR_input
     (time ./bin/spark-submit --class org.apache.spark.examples.graphx.LiveJournalPageRank $spark_path/examples/target/spark-examples_2.10-1.6.0.jar file://$PR_input_path --numIter=$PR_num_iter --numEPart=$spark_worker_cores) > $result_path/$1.jvmlog 2>&1
     ;;
+
     terasort)
     input=$TS_input
+    # generate input
+    if [ ! -d $TS_input_path ] then
+      ./bin/spark-submit --class com.github.ehiggs.spark.terasort.TeraGen $spark_path/../spark-terasort-master/target/spark-terasort-1.0-SNAPSHOT-jar-with-dependencies.jar $TS_input file://$TS_input_path
+    fi
+
+    (time ./bin/spark-submit --class com.github.ehiggs.spark.terasort.TeraSort $spark_path/../spark-terasort-master/target/spark-terasort-1.0-SNAPSHOT-jar-with-dependencies.jar file://$TS_input_path file://$TS_output_path) > $result_path/$1.jvmlog 2>&1
     ;;
+   # no validation
   esac
 }
 
@@ -148,7 +162,7 @@ do
     then
       rm $result_path/${bm_prg[$i]}.filepages.log
     fi
-    nohup watch -t -n 1 "(numastat -m -z | sed -n '/^FilePages/p' | awk '{ print $3 }') | tee -a $result_path/${bm_prg[$i]}.filepages.log" &
+    nohup watch -t -n 1 "(numastat -m -z | sed -n '/^$numastat_event/p' | awk '{ print $3 }') | tee -a $result_path/${bm_prg[$i]}.$numastat_event.log" &
     pid_log="$!"
 
     # run bench
