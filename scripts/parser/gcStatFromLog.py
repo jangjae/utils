@@ -34,7 +34,8 @@ class gcStat:
     	line = re.sub('s', ' ', line)
     	return re.split('\s*', line)
 
-    def parse_gclog(self, inf):
+    def parse_gclog(self, inf, outf):
+        outf.write("# TimeStamp, YGC/FGC, Footprint, Reclaimed, Elapsed Time \n")
         for line in inf:
             t = self.parse_line(line)
             if len(t) > 2:
@@ -44,11 +45,19 @@ class gcStat:
                     self.cur_ygc_time = float(t[11])
                     self.total_alloc_size += self.cur_alloc_size
                     self.total_ygc_time += self.cur_ygc_time
+                    if args.gcdump:
+                      # fprint tuple (timestamp, y/f, footprint, reclaimed, time) to logfile
+                      t[0] = re.sub(':', '', t[0])
+                      outf.write(t[0] + ",Y," + t[7] + "," + str(self.cur_alloc_size) + "," + str(self.cur_ygc_time) + "\n")
                 elif t[1] == "[Full":
                     self.total_num_fgc += 1
                     self.cur_alloc_size = int(t[13], 10) - int(t[14], 10)
                     self.total_fgc_time += float(t[23])
                     self.total_alloc_size += self.cur_alloc_size
+                    if args.gcdump:
+                      # fprint tuple (timestamp, y/f, footprint, reclaimed, time) to logfile
+                      t[0] = re.sub(':', ' ', t[0])
+                      outf.write(t[0] + ",F," + t[13] + "," + str(self.cur_alloc_size) + "," + str(float(t[23])) + "\n")
     
     def parse_jvmlog(self, inf):
         for line in inf:
@@ -128,6 +137,7 @@ arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument("infile", help = "type in input file name")
 arg_parser.add_argument("-d", "--dump", help = "cat & dump file", action="store_true")
 arg_parser.add_argument("-m", "--match", help = "make name match file", action="store_true")
+arg_parser.add_argument("-g", "--gcdump", help = "gcdump for graph", action="store_true")
 args = arg_parser.parse_args()
 
 infilename_jvmlog = args.infile + ".jvmlog"
@@ -135,6 +145,7 @@ infile_jvmlog = open(infilename_jvmlog, 'r')
 
 infilename_gclog = args.infile + ".gclog"
 infile_gclog = open(infilename_gclog, 'r')
+outfile_gclog = open(infilename_gclog + ".csv", 'w')
 
 outfilename_summary = ""
 outfilename_summary = args.infile+ ".summary"
@@ -149,7 +160,7 @@ if args.dump:
     infile_dump= open(infilename_dump, 'r')
 
 summary = gcStat()
-summary.parse_gclog(infile_gclog)
+summary.parse_gclog(infile_gclog, outfile_gclog)
 summary.parse_jvmlog(infile_jvmlog)
 summary.print_on(outfile_summary)
 
