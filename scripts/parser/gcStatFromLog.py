@@ -18,6 +18,9 @@ class gcStat:
     total_sys_time = 0.0
     total_alloc_size = 0
     allocation_rate = 0
+    instructions= 0.0
+    l2misses= 0.0
+    mpki = 0.0
     
     total_acnt = 0
     line_cnt = 0
@@ -67,6 +70,14 @@ class gcStat:
                     self.total_exec_time = float(t[1])*60 + float(t[2])
                 elif t[0] == "sys":
                     self.total_sys_time = float(t[1])*60 + float(t[2])
+                
+                t = re.sub(' ', ' ',  line)
+                t = re.sub('\t', ' ', line)
+                t = re.split('\s*',   line)
+                if t[2] == "instructions":
+                  self.instructions = float(re.sub(',', '', t[1]))
+                if t[2] == "r404":
+                  self.l2misses = float(re.sub(',', '', t[1]))
     
     def parse_dump(self, inf, hotratio):
         for line in inf:
@@ -107,28 +118,31 @@ class gcStat:
         self.total_mut_time = self.total_exec_time - (self.total_ygc_time + self.total_fgc_time)
         self.allocation_rate = float(self.total_alloc_size) / \
         (float(self.total_exec_time) / float(self.total_num_gc))
-        print "Total exec time: ",      self.total_exec_time
+        self.mpki = (float(self.l2misses) / float(self.instructions)) * 1000
+        print "Total exec time:      ", self.total_exec_time
         print "Total young GC time : ", self.total_ygc_time
-        print "Total full GC time: ",   self.total_fgc_time
-        print "Total GC time: ",        self.total_gc_time
-        print "--# of Young GC: ",      self.total_num_ygc
-        print "--# of Full GC: ",       self.total_num_fgc
-        print "--# of GC: ",            self.total_num_gc
-        print "--Total GC time: ",      self.total_gc_time
-        print "Tatal Mutator time: ",   self.total_mut_time
-        print "Total alloc size: ",     self.total_alloc_size
-        print "Allocation rate: ",      self.allocation_rate
+        print "Total full GC time:   ", self.total_fgc_time
+        print "Total GC time:        ", self.total_gc_time
+        print "--# of Young GC:      ", self.total_num_ygc
+        print "--# of Full GC:       ", self.total_num_fgc
+        print "--# of GC:            ", self.total_num_gc
+        print "--Total GC time:      ", self.total_gc_time
+        print "Tatal Mutator time:   ", self.total_mut_time
+        print "Total alloc size:     ", self.total_alloc_size
+        print "Allocation rate:      ", self.allocation_rate
+        print "MPKI (L2):            ", self.mpki
         
-        outf.write("Total exec time: \t " +     str(self.total_exec_time) + "\n")
+        outf.write("Total exec time:     \t " + str(self.total_exec_time) + "\n")
         outf.write("Total young GC time: \t " + str(self.total_ygc_time) + "\n")
-        outf.write("Total full GC time: \t " +  str(self.total_fgc_time) + "\n")
-        outf.write("Total GC time: \t " +       str(self.total_gc_time) + "\n")
-        outf.write("--# of Young GC: \t " +     str(self.total_num_ygc) + "\n")
-        outf.write("--# of Full GC: \t "+       str(self.total_num_fgc) + "\n")
-        outf.write("--# of GC: \t "+            str(self.total_num_gc) + "\n")
-        outf.write("Total Mutator time: \t " +  str(self.total_mut_time) + "\n")
-        outf.write("Total alloc size: \t " +    str(self.total_alloc_size) + "\n")
-        outf.write("Allocation rate: \t " +     str(self.allocation_rate) + "\n")
+        outf.write("Total full GC time:  \t " + str(self.total_fgc_time) + "\n")
+        outf.write("Total GC time:       \t " + str(self.total_gc_time) + "\n")
+        outf.write("--# of Young GC:     \t " + str(self.total_num_ygc) + "\n")
+        outf.write("--# of Full GC:      \t "+  str(self.total_num_fgc) + "\n")
+        outf.write("--# of GC:           \t "+  str(self.total_num_gc) + "\n")
+        outf.write("Total Mutator time:  \t " + str(self.total_mut_time) + "\n")
+        outf.write("Total alloc size:    \t " + str(self.total_alloc_size) + "\n")
+        outf.write("Allocation rate:     \t " + str(self.allocation_rate) + "\n")
+        outf.write("MPKI (L2):           \t " + str(self.mpki) + "\n")
 
 # main -----------------
 
