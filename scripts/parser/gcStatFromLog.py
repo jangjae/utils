@@ -19,8 +19,13 @@ class gcStat:
     total_alloc_size = 0
     allocation_rate = 0
     instructions= 0.0
+    l2hits = 0.0
     l2misses= 0.0
+    l2hits_pf = 0.0
+    l2misses_pf = 0.0
+    cycles= 0.0
     mpki = 0.0
+    cpi = 0.0
     
     total_acnt = 0
     line_cnt = 0
@@ -71,13 +76,25 @@ class gcStat:
                 elif t[0] == "sys":
                     self.total_sys_time = float(t[1])*60 + float(t[2])
                 
-                t = re.sub(' ', ' ',  line)
+                #t = re.sub(' ', '',  line)
                 t = re.sub('\t', ' ', line)
                 t = re.split('\s*',   line)
-                if t[2] == "instructions":
+                if (t[1] == "instructions"):
+                  self.instructions = float(re.sub(',', '', t[0]))
+                elif (t[2] == "instructions"):
                   self.instructions = float(re.sub(',', '', t[1]))
+                if t[2] == "r204":
+                  self.l2hits = float(re.sub(',', '', t[1]))
                 if t[2] == "r404":
                   self.l2misses = float(re.sub(',', '', t[1]))
+                if t[2] == "r4F2E":
+                  self.l2hits_pf = float(re.sub(',', '', t[1]))
+                if t[2] == "r412E":
+                  self.l2misses_pf = float(re.sub(',', '', t[1]))
+                if (t[1] == "cycles"):
+                  self.cycles = float(re.sub(',', '', t[0]))
+                elif (t[2] == "cycles"):
+                  self.cycles = float(re.sub(',', '', t[1]))
     
     def parse_dump(self, inf, hotratio):
         for line in inf:
@@ -118,7 +135,16 @@ class gcStat:
         self.total_mut_time = self.total_exec_time - (self.total_ygc_time + self.total_fgc_time)
         self.allocation_rate = float(self.total_alloc_size) / \
         (float(self.total_exec_time) / float(self.total_num_gc))
-        self.mpki = (float(self.l2misses) / float(self.instructions)) * 1000
+
+        self.mpki = 0 if self.instructions == 0 else \
+                    (float(self.l2misses) / float(self.instructions)) * 1000
+        self.cpi  = 0 if self.instructions == 0 else \
+                    (float(self.cycles) / float(self.instructions))
+        self.l2missrate  = 0 if (self.l2hits == 0) or (self.l2misses==0) else \
+                    float(self.l2misses) / (float(self.l2hits) + float(self.l2misses))
+        self.l2missrate_pf  = 0 if (self.l2hits_pf == 0) or (self.l2misses_pf == 0) else \
+                    float(self.l2misses_pf) / (float(self.l2hits_pf) + float(self.l2misses_pf))
+
         print "Total exec time:      ", self.total_exec_time
         print "Total young GC time : ", self.total_ygc_time
         print "Total full GC time:   ", self.total_fgc_time
@@ -131,6 +157,9 @@ class gcStat:
         print "Total alloc size:     ", self.total_alloc_size
         print "Allocation rate:      ", self.allocation_rate
         print "MPKI (L2):            ", self.mpki
+        print "CPI:                  ", self.cpi
+        print "L2 miss rate (ret):   ", self.l2missrate
+        print "L2 miss rate (pf):    ", self.l2missrate_pf
         
         outf.write("Total exec time:     \t " + str(self.total_exec_time) + "\n")
         outf.write("Total young GC time: \t " + str(self.total_ygc_time) + "\n")
@@ -143,6 +172,9 @@ class gcStat:
         outf.write("Total alloc size:    \t " + str(self.total_alloc_size) + "\n")
         outf.write("Allocation rate:     \t " + str(self.allocation_rate) + "\n")
         outf.write("MPKI (L2):           \t " + str(self.mpki) + "\n")
+        outf.write("CPI:                 \t " + str(self.cpi) + "\n")
+        outf.write("L2 miss rate (ret):  \t " + str(self.l2missrate) + "\n")
+        outf.write("L2 miss rate (pf):   \t " + str(self.l2missrate_pf) + "\n")
 
 # main -----------------
 
