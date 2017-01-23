@@ -63,6 +63,7 @@ set ignorecase
 syntax on
 set hls
 set km=startsel,stopsel
+set tags=tags;/
 set tags+=/usr/sys/tags
 set tags+=/usr/include/tags
 set tags+=/home/jangjaeyoung/tags
@@ -98,14 +99,14 @@ map <F9>		:tn<CR>
 set nocompatible 
 filetype off
 set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+"call vundle#rc()
 
 " 필수 Bundle
-Bundle 'gmarik/vundle'
-Bundle 'Yggdroot/indentLine'
+" Bundle 'gmarik/vundle'
+" Bundle 'Yggdroot/indentLine'
 
-Plugin 'The-NERD-tree'
-Plugin 'Conque-shell'
+" Plugin 'The-NERD-tree'
+" Plugin 'Conque-shell'
 "Plugin 'taglist.vim'
 
 filetype plugin indent on
