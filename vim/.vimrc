@@ -59,10 +59,14 @@ set cursorline
 "set whichwrap=h,l,[,]
 set wildmode=longest:full,full
 set ignorecase
+set showcmd
+set title
+set mouse=a
 
 syntax on
 set hls
 set km=startsel,stopsel
+set tags=tags;/
 set tags+=/usr/sys/tags
 set tags+=/usr/include/tags
 set tags+=/home/jangjaeyoung/tags
@@ -76,16 +80,101 @@ au BufReadPost *
 \   exe "norm g`\"" |
 \ endif
 
-" Conque-shell related
+if version >= 500
+func! Sts()
+	let st = expand("<cword>")
+	exe "sts ".st
+	endfunc
+	nmap ,st :call Sts()<CR>
 
-" let g:ConqueTerm_InsertOnEnter = 1
-" let g:ConqueTerm_CWInsert = 1
-" let g:ConqueTerm_ClosedOnEnd = 1
+func! Tj()
+	let st = expand("<cword>")
+	exe "tj ".st
+	endfunc
+	nmap ,tj :call Tj()<CR>
+	endif
+
+" 3.Cscope Configuration
+set csprg=/usr/bin/cscope
+set csto=0
+set cst
+set nocsverb
+
+if 1
+map <c-s> :w<CR>
+map <c-c> y:call system("xclip -i -selection clipboard", getreg("\""))<CR>
+map <c-a> :call setreg("\"",system("xclip -o -selection clipboard"))<CR>p
+map <c-x> :'a,'b w! ~/tmp/tmp<CR> :'a,'b d<CR>
+map <c-p> :r ~/tmp/tmp<CR>
+map <c-n> <s-*>
+map <s-z> :. s/^/\/\/#Comment By HKKim# /<CR>
+map <s-c> :. s/^\/\/#Comment By HKKim# //g<CR>
+endif
+
+
+"if filereadable("./cscope.out")
+"cs add cscope.out
+"else
+"cs add ./cscope.out
+"cs add ./../cscope.out
+"cs add ./../../cscope.out
+"cs add ./../../../cscope.out
+"cs add ./../../../../cscope.out
+"cs add ./../../../../../cscope.out
+"endif
+"set csverb
+
+
+
+" 4.Cscope Function & Key
+" 4.1 Find this C symbol
+func! Css()
+	let css = expand("<cword>")
+	new
+	exe "cs find s ".css
+	if getline(1) == ""
+		exe "q!"
+	endif
+endfunc
+nmap ,css :call Css()<cr>
+
+" 4.2 Find finctions calling this function
+func! Csc()
+	let csc = expand("<cword>")
+	new
+	exe "cs find c ".csc
+	if getline(1) == ""
+		exe "q!"
+	endif
+endfunc
+nmap ,csc :call Csc()<cr>
+
+" 4.3 Find functions called by this function
+func! Csd()
+	let csd = expand("<cword>")
+	new
+	exe "cs find d ".csd
+	if getline(1) == ""
+		exe "q!"
+	endif
+endfunc
+nmap ,csd :call Csd()<cr>
+
+" 4.4 Find this definition
+func! Csg()
+	let csg = expand("<cword>")
+	new
+	exe "cs find g ".csg
+	if getline(1) == ""
+		exe "q!"
+	endif
+endfunc
+nmap ,csg :call Csg()<cr>
 
 filetype on
 "filetype plugin on
 
-map <F2>		:E<CR>
+map <F2>		:Ex<CR>
 map <F3>		gt
 map <F4>		gT
 map <F5>		:tabnew<CR>
@@ -98,15 +187,15 @@ map <F9>		:tn<CR>
 set nocompatible 
 filetype off
 set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+"call vundle#rc()
 
 " 필수 Bundle
-Bundle 'gmarik/vundle'
-Bundle 'Yggdroot/indentLine'
+" Bundle 'gmarik/vundle'
+" Bundle 'Yggdroot/indentLine'
 
-Plugin 'The-NERD-tree'
-Plugin 'Conque-shell'
-Plugin 'taglist.vim'
+" Plugin 'The-NERD-tree'
+" Plugin 'Conque-shell'
+"Plugin 'taglist.vim'
 
 filetype plugin indent on
 
