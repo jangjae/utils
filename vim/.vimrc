@@ -35,7 +35,7 @@ set mouse=a
 set nomousehide
 set nobackup
 set noerrorbells
-set expandtab
+"set expandtab
 "set nowrap
 set number!
 set report=0
