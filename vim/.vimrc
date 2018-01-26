@@ -16,7 +16,35 @@
 " set laststatus=2
 " set statusline=%f
 " set mouse=nicr
+
+set nocompatible 
+filetype off
+
+" Bundle
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'VundleVim/Vundle.vim'
+
+"dirdiff
+Plugin 'will133/vim-dirdiff'
 "
+
+" 필수 Bundle
+Bundle 'Yggdroot/indentLine'
+
+" Plugin 'The-NERD-tree'
+" Plugin 'Conque-shell'
+" Plugin 'taglist.vim'
+
+call vundle#end()
+
+let g:indentLine_char = '|'
+let g:indentLine_color_term = 0
+let g:DirDiffExcludes = ".svn,tags,*.pyc,.git"
+
+filetype plugin indent on
+
 set fileencoding=utf-8
 set fileencodings=utf-8,cp949,euc-kr
 set termencoding=utf-8
@@ -184,20 +212,4 @@ map <F7>		:tlist<CR>
 map <F8>		:tb<CR>
 map <F9>		:tn<CR>
 
-set nocompatible 
-filetype off
-set rtp+=~/.vim/bundle/vundle/
-"call vundle#rc()
 
-" 필수 Bundle
-" Bundle 'gmarik/vundle'
-" Bundle 'Yggdroot/indentLine'
-
-" Plugin 'The-NERD-tree'
-" Plugin 'Conque-shell'
-"Plugin 'taglist.vim'
-
-filetype plugin indent on
-
-let g:indentLine_char = '|'
-let g:indentLine_color_term = 0
