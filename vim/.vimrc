@@ -1,22 +1,3 @@
-" set nu
-" "set term=xterm-256color
-" "color northland
-" set tabstop=2
-" set shiftwidth=2
-" "set autoindent
-" "set cindent
-" set ignorecase
-" "set smartcase
-" "set smartindent
-" set sol
-" set showmatch
-" set mps+=<:>
-" set wmnu
-" set hls
-" set laststatus=2
-" set statusline=%f
-" set mouse=nicr
-
 set nocompatible 
 filetype off
 
@@ -45,14 +26,21 @@ let g:DirDiffExcludes = ".svn,tags,*.pyc,.git"
 
 filetype plugin indent on
 
+" indent related
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+set smartindent
+set cindent
+set autoindent
+
 set fileencoding=utf-8
 set fileencodings=utf-8,cp949,euc-kr
 set termencoding=utf-8
 set encoding=utf-8
-set autoindent
 set autowrite
 set backspace=indent,eol,start
-set cindent
 set cinoptions=:0,g0,0,l1,t0
 set history=1000
 set hlsearch
@@ -70,16 +58,13 @@ set report=0
 set ruler
 set scrolloff=5
 set selection=exclusive
-set shiftwidth=2
-set tabstop=2
+
 set showmatch
 set showcmd
 set showmode
 set sidescrolloff=5
 set smartcase
-set smartindent
 set startofline
-set softtabstop=0
 set title
 set ttyfast
 set wildmenu
@@ -139,21 +124,6 @@ map <s-z> :. s/^/\/\/#Comment By HKKim# /<CR>
 map <s-c> :. s/^\/\/#Comment By HKKim# //g<CR>
 endif
 
-
-"if filereadable("./cscope.out")
-"cs add cscope.out
-"else
-"cs add ./cscope.out
-"cs add ./../cscope.out
-"cs add ./../../cscope.out
-"cs add ./../../../cscope.out
-"cs add ./../../../../cscope.out
-"cs add ./../../../../../cscope.out
-"endif
-"set csverb
-
-
-
 " 4.Cscope Function & Key
 " 4.1 Find this C symbol
 func! Css()
@@ -211,5 +181,3 @@ map <F6>		:sts<CR>
 map <F7>		:tlist<CR>
 map <F8>		:tb<CR>
 map <F9>		:tn<CR>
-
-
