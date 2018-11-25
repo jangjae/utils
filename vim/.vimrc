@@ -52,6 +52,14 @@ let g:airline#extensions#tabline#enabled = 0 " turn on buffer list
 let g:airline_theme='jellybeans'
 set laststatus=2 " turn on bottom bar
 
+" nerdtree location
+" let g:NERDTreeWinPos="right" " left of right
+let g:NERDTreeAutoCenter=1  
+let g:NERDTreeHighlightCursorline=1 
+let g:NERDTreeMouseMode=1 
+let g:NERDTreeQuitOnOpen=1 
+let g:NERDTreeShowBookmarks=1 
+
 " indent related
 set tabstop=4
 set shiftwidth=4
